@@ -1,0 +1,2 @@
+- Unit test for InMemoryRegistry::makeNewObjectSnapshot()
+- Unit test for InMemoryRegistry::cleanRemovedObject()

@@ -126,22 +126,32 @@ class UnitOfWork
     public function commit()
     {
         foreach ($this->registry->all() as $entity) {
-            switch($this->getEntityState($entity)) {
-                case EntityStates::NEW_ENTITY:
-                    $this->commandBus->dispatch(new NewCommand($entity));
-                    break;
-                case EntityStates::EDITED_ENTITY:
-                    $changeSet = $this->changeBuilder->buildChanges($this->registry->getSnapshot($entity), $entity);
-                    $this->commandBus->dispatch(new EditCommand($entity, $changeSet));
-                    break;
-                case EntityStates::REMOVED_ENTITY:
-                    $this->commandBus->dispatch(new RemoveCommand($entity));
-                    break;
-            }
+            $this->doCommitEntity($entity);
         }
 
         $this->registry->cleanRemoved();
         $this->registry->makeNewSnapshots();
+    }
+
+    /**
+     * Commits particular entity.
+     * The rest of the 'snapshot' will remain untouched.
+     *
+     * @param mixed $entity
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    public function commitEntity($entity)
+    {
+        if (!is_object($entity)) {
+            throw new InvalidArgumentException("Only objects can be committed by Unit of Work.");
+        }
+
+        $this->doCommitEntity($entity);
+
+        $this->registry->cleanRemovedObject($entity);
+        $this->registry->makeNewObjectSnapshot($entity);
     }
 
     /**
@@ -150,6 +160,28 @@ class UnitOfWork
     public function rollback()
     {
         $this->registry->reset();
+    }
+
+    /**
+     * @param mixed $entity
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    private function doCommitEntity($entity)
+    {
+        switch($this->getEntityState($entity)) {
+            case EntityStates::NEW_ENTITY:
+                $this->commandBus->dispatch(new NewCommand($entity));
+                break;
+            case EntityStates::EDITED_ENTITY:
+                $changeSet = $this->changeBuilder->buildChanges($this->registry->getSnapshot($entity), $entity);
+                $this->commandBus->dispatch(new EditCommand($entity, $changeSet));
+                break;
+            case EntityStates::REMOVED_ENTITY:
+                $this->commandBus->dispatch(new RemoveCommand($entity));
+                break;
+        }
     }
 
     /**

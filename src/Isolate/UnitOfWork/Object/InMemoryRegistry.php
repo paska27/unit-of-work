@@ -2,6 +2,8 @@
 
 namespace Isolate\UnitOfWork\Object;
 
+use Isolate\UnitOfWork\Exception\InvalidArgumentException;
+
 class InMemoryRegistry implements Registry
 {
     /**
@@ -73,8 +75,16 @@ class InMemoryRegistry implements Registry
     public function makeNewSnapshots()
     {
         foreach ($this->objects as $id => $entity) {
-            $this->snapshots[$id] = $this->snapshotMaker->makeSnapshotOf($entity);
+            $this->makeNewObjectSnapshot($entity);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function makeNewObjectSnapshot($object)
+    {
+        $this->snapshots[$this->getId($object)] = $this->snapshotMaker->makeSnapshotOf($object);
     }
 
     /**
@@ -108,6 +118,19 @@ class InMemoryRegistry implements Registry
         }
 
         $this->removed = [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cleanRemovedObject($object)
+    {
+        $id = $this->getId($object);
+        if (empty($id)) {
+            throw new InvalidArgumentException("Object wasn't set as removed");
+        }
+
+        unset($this->snapshots[$id], $this->objects[$id], $this->removed[$id]);
     }
 
     /**

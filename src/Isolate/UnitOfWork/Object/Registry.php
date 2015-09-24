@@ -32,10 +32,17 @@ interface Registry
 
     /**
      * Make new snapshots for all registered objects
-     * 
+     *
      * @api
      */
     public function makeNewSnapshots();
+
+    /**
+     * Make new snapshots for all registered objects
+     *
+     * @param mixed $object
+     */
+    public function makeNewObjectSnapshot($object);
 
     /**
      * @param mixed $object
@@ -56,10 +63,19 @@ interface Registry
 
     /**
      * Cleans all objects marked as removed
-     * 
+     *
      * @api
      */
     public function cleanRemoved();
+
+    /**
+     * Cleans particular object marked as removed
+     *
+     * @param mixed $object
+     *
+     * @api
+     */
+    public function cleanRemovedObject($object);
 
     /**
      * @return array
