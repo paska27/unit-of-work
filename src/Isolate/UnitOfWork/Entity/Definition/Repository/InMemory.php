@@ -32,7 +32,7 @@ final class InMemory implements Repository
                 throw new InvalidArgumentException("Each element in collection needs to be an instance of Isolate\\UnitOfWork\\Entity\\Definition");
             }
 
-            $this->entityDefinitions[(string) $definition->getClassName()] = $definition;
+            $this->addDefinition($definition);
         }
 
         $this->validateAssociations();
@@ -64,6 +64,14 @@ final class InMemory implements Repository
         }
 
         return $this->entityDefinitions[get_class($entity)];
+    }
+
+    /**
+     * @param Definition $definition
+     */
+    public function addDefinition(Definition $definition)
+    {
+        $this->entityDefinitions[(string) $definition->getClassName()] = $definition;
     }
 
     /**
