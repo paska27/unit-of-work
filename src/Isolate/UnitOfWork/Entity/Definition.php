@@ -244,7 +244,7 @@ class Definition
      * @throws InvalidArgumentException
      * @throws NotExistingPropertyException
      */
-    private function validatePropertyPaths($className, Identity $idDefinition, array $observedProperties)
+    protected function validatePropertyPaths($className, Identity $idDefinition, array $observedProperties)
     {
         $reflection = new \ReflectionClass($className);
         foreach ($observedProperties as $property) {
