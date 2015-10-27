@@ -2,6 +2,7 @@
 
 namespace Isolate\UnitOfWork\Entity\Property;
 
+use Isolate\UnitOfWork\Object\InterfacePropertyAccessor;
 use Isolate\UnitOfWork\Object\PropertyAccessor;
 use Isolate\UnitOfWork\Entity\Definition\Property;
 use Isolate\UnitOfWork\Exception\InvalidArgumentException;
@@ -11,7 +12,7 @@ use SebastianBergmann\Comparator\Factory;
 final class PHPUnitValueComparer implements ValueComparer
 {
     /**
-     * @var PropertyAccessor
+     * @var InterfacePropertyAccessor
      */
     private $propertyAccessor;
 
@@ -19,7 +20,7 @@ final class PHPUnitValueComparer implements ValueComparer
      * @var Factory
      */
     private $comparatorFactory;
-    
+
     public function __construct()
     {
         $this->comparatorFactory = new Factory();
@@ -35,11 +36,10 @@ final class PHPUnitValueComparer implements ValueComparer
      */
     public function hasDifferentValue(Property $property, $firstObject, $secondObject)
     {
-        $this->validaObjects($firstObject, $secondObject);
+        $this->validateObjects($firstObject, $secondObject);
 
         $firstValue = $this->propertyAccessor->getValue($firstObject, $property->getName());
         $secondValue = $this->propertyAccessor->getValue($secondObject, $property->getName());
-
         
         $comparator = $this->comparatorFactory->getComparatorFor($firstValue, $secondValue);
 
@@ -52,11 +52,19 @@ final class PHPUnitValueComparer implements ValueComparer
     }
 
     /**
+     * @param InterfacePropertyAccessor $propertyAccessor
+     */
+    public function setPropertyAccessor(InterfacePropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
      * @param $firstObject
      * @param $secondObject
      * @throws InvalidArgumentException
      */
-    private function validaObjects($firstObject, $secondObject)
+    private function validateObjects($firstObject, $secondObject)
     {
         if (!is_object($firstObject) || !is_object($secondObject)) {
             throw new InvalidArgumentException("Compared values need to be a valid objects.");

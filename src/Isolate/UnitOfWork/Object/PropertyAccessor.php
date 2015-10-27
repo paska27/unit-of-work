@@ -8,7 +8,7 @@ use Isolate\UnitOfWork\Exception\NotExistingPropertyException;
 /**
  * @api
  */
-final class PropertyAccessor
+final class PropertyAccessor implements InterfacePropertyAccessor
 {
     /**
      * @param $object
