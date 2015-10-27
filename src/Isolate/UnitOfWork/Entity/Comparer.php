@@ -4,6 +4,7 @@ namespace Isolate\UnitOfWork\Entity;
 
 use Isolate\UnitOfWork\Entity\Definition\Repository;
 use Isolate\UnitOfWork\Entity\Property\PHPUnitValueComparer;
+use Isolate\UnitOfWork\Entity\Property\ValueComparer;
 use Isolate\UnitOfWork\Exception\InvalidArgumentException;
 
 /**
@@ -12,7 +13,7 @@ use Isolate\UnitOfWork\Exception\InvalidArgumentException;
 class Comparer
 {
     /**
-     * @var PHPUnitValueComparer
+     * @var ValueComparer
      */
     private $propertyValueComparer;
 
@@ -23,10 +24,11 @@ class Comparer
 
     /**
      * @param Repository $definitions
+     * @param null|ValueComparer $valueComparer
      */
-    public function __construct(Repository $definitions)
+    public function __construct(Repository $definitions, ValueComparer $valueComparer = null)
     {
-        $this->propertyValueComparer = new PHPUnitValueComparer();
+        $this->propertyValueComparer = $valueComparer ? $valueComparer : new PHPUnitValueComparer();
         $this->definitions = $definitions;
     }
 
