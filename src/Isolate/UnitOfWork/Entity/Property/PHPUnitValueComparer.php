@@ -9,7 +9,7 @@ use Isolate\UnitOfWork\Exception\InvalidArgumentException;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use SebastianBergmann\Comparator\Factory;
 
-final class PHPUnitValueComparer implements ValueComparer
+class PHPUnitValueComparer implements ValueComparer
 {
     /**
      * @var InterfacePropertyAccessor
