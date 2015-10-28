@@ -6,11 +6,13 @@ use Isolate\UnitOfWork\Entity\Definition\Association;
 use Isolate\UnitOfWork\Entity\Definition\Property;
 use Isolate\UnitOfWork\Entity\Definition\Repository;
 use Isolate\UnitOfWork\Entity\Property\PHPUnitValueComparer;
+use Isolate\UnitOfWork\Entity\Property\ValueComparer;
 use Isolate\UnitOfWork\Entity\Value\Change\AssociatedCollection;
 use Isolate\UnitOfWork\Entity\Value\ChangeSet;
 use Isolate\UnitOfWork\Entity\Value\Change\EditedEntity;
 use Isolate\UnitOfWork\Entity\Value\Change\NewEntity;
 use Isolate\UnitOfWork\Entity\Value\Change\RemovedEntity;
+use Isolate\UnitOfWork\Object\InterfacePropertyAccessor;
 use Isolate\UnitOfWork\Object\PropertyAccessor;
 use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
 use Isolate\UnitOfWork\Exception\RuntimeException;
@@ -21,12 +23,12 @@ use Isolate\UnitOfWork\Exception\RuntimeException;
 final class ChangeBuilder
 {
     /**
-     * @var PropertyAccessor
+     * @var InterfacePropertyAccessor
      */
     private $propertyAccessor;
 
     /**
-     * @var PHPUnitValueComparer
+     * @var ValueComparer
      */
     private $propertyValueComparer;
 
@@ -43,11 +45,12 @@ final class ChangeBuilder
     /**
      * @param Repository $definitions
      * @param Identifier $identifier
+     * @param ValueComparer $valueComparer
      */
-    public function __construct(Repository $definitions, Identifier $identifier)
+    public function __construct(Repository $definitions, Identifier $identifier, ValueComparer $valueComparer = null)
     {
         $this->propertyAccessor = new PropertyAccessor();
-        $this->propertyValueComparer = new PHPUnitValueComparer();
+        $this->propertyValueComparer = $valueComparer ? $valueComparer : new PHPUnitValueComparer();
         $this->definitions = $definitions;
         $this->identifier = $identifier;
     }
@@ -74,6 +77,14 @@ final class ChangeBuilder
         }
 
         return new ChangeSet($changes);
+    }
+
+    /**
+     * @param InterfacePropertyAccessor $propertyAccessor
+     */
+    public function setPropertyAccessor(InterfacePropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**

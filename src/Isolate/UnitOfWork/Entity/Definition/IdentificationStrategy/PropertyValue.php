@@ -5,6 +5,7 @@ namespace Isolate\UnitOfWork\Entity\Definition\IdentificationStrategy;
 use Isolate\UnitOfWork\Entity\Definition\IdentificationStrategy;
 use Isolate\UnitOfWork\Entity\Definition\Identity;
 use Isolate\UnitOfWork\Exception\RuntimeException;
+use Isolate\UnitOfWork\Object\InterfacePropertyAccessor;
 use Isolate\UnitOfWork\Object\PropertyAccessor;
 
 class PropertyValue implements IdentificationStrategy
@@ -15,7 +16,7 @@ class PropertyValue implements IdentificationStrategy
     private $identity;
 
     /**
-     * @var PropertyAccessor
+     * @var InterfacePropertyAccessor
      */
     private $propertyAccessor;
 
@@ -53,5 +54,13 @@ class PropertyValue implements IdentificationStrategy
         }
 
         return $identity;
+    }
+
+    /**
+     * @param InterfacePropertyAccessor $propertyAccessor
+     */
+    public function setPropertyAccessor(InterfacePropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
     }
 }
